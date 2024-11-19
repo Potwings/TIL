@@ -1,6 +1,66 @@
 # TIL
 오늘 뭐했지?
 
+## 2024/11/19
+### 카카오 AI 컨퍼런스 영상 내용 분석(https://www.youtube.com/watch?v=2wsxPekh_ak)
+
+- 라벨링 개선
+    - 분류 모델(라벨 추천, AI 참고 영역) + LMM(분류 근거, 이미지 설명)으로 AI 활용
+    - LMM에서는 LoRA를 활용한 파인튜닝을 진행하였으나 최근에는 프롬프트 엔지니어링 + Few Shot으로 처리
+    - 카테고리 별로 라벨링을 진행하나 다른 카테고리와 score값의 차이가 적을 경우 사람이 교차 검증을 진행한 후 분류모델, 유사도 DB에 반영한다.
+- LLM으로 스팸 분류
+    - 유해 모니터링
+        - 데이터를 수집하는 것이 아닌 실제 사용자 보호를 위한 관리
+        - 운영자의 효율성을 위해 유입 컨텐츠에 대한 1차 필터링 진행
+            - 운영자의 혼란을 방지하기 위해 분류 사유 함꼐 제공 → **이를 위해 LLM 사용**
+            - 프롬프트 엔지니어링을 통해 진행
+                - 분류 사유를 출력 후 분류 결과 출력하도록 했더니 **F1-Score 개선**
+    - AI 가드레일
+        - AI가 생성한 답변의 안정성과 윤리성을 검토하는 시스템
+        - AI는 중립적이고 윤리적인 답변만 해야 한다.
+        - 허나 다양한(safe + unsafe + normal) 데이터를 포함했을 때 성능이 가장 좋았다.
+        → 균형있는 데이터는 분류 성능의 향상으로 이어진다.
+
+### F1-Score부터 시작된 통계 관련 내용 학습
+
+- Accuracy, Precision, Recall, F1-Score, Fall-Out, TruePositive… (별도 글로 정리 예정)
+
+### OFS OOM 이슈 분석 진행
+
+- AWS OFS에서 지속적으로 OOM이 발생하며 서비스 중단되는 이슈 발생하여 분석
+    - Cyren 파일 전달 시 파일 크기가 커서 OOM 발생하고 있었음
+        
+        → Buffer를 활용하도록 개선 진행 예정
+        
+        check) 왜 Buffer를 활용하면 메모리 개선되는지?
+        
+    - 모니터링 툴로 분석해보니 메모리 사용량이 계속해서 증가하고 있음
+
+Work TODO
+
+- OFS OOM 이슈 조치 - 지속적으로 증가하는 메모리 사용량 원인 확인
+- 통계 관련 내용 학습 마무리
+- 카카오 컨퍼런스 스미싱 관련 내용 확인 https://www.youtube.com/watch?v=eDSXcJOCT5k
+
+Personal TODO
+
+- 통계 관련 학습 내용 글 작성
+- Buffer 파일 전송 관련 글 작성
+
+## 2024/11/18
+
+Bert 학습 방식 - Masked Language Modeling, Next Setence Prediction 동시 진행
+
+Masked Language Modeling
+
+- Input에 random하게 몇 개의 token을 masking
+- left, right context만을 가지고 masked word의 원래 단어를 예측
+
+Next Setence Prediction
+
+- training data로 senetence pair(두 개의 문장을 묶어서 만듦) 사용
+- 주요 목적은 output의 C([CLS])를 train 시키는 것
+
 ## 2024/11/14
 
 Trasformers를 통해 모델을 불러올 때 두가지 종류가 존재함. (AutoModel, AutoModelfor…..)
