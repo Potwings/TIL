@@ -1,8 +1,59 @@
 # TIL
 오늘 뭐했지?
 
+## 2024/11/20
+
+TODO
+- F1 Score vs AUC 확인 후 학습시킨 모델에 수치 확인
+- https://www.youtube.com/watch?v=eDSXcJOCT5k 내용 정리
+- 임시 파일 이슈 분석
+- Bert 파인튜닝 강의 마무리
+
+### 분류 성능 평가 지표 정리
+
+- 각 용어들 내용 학습 완료
+
+### OOM 이슈 조치
+
+- 파일 전달 시 파일 크기가 커서 OOM 발생
+    
+    stream을 활용하여 파일 전체를 메모리에 올리지 않도록 개선
+    
+    ```java
+    //AS-IS
+    byte[] fileByte = FileUtils.readFileToByteArray(new File(filePath));
+    
+    response.setContentType("application/zip");
+    response.setHeader("Content-Transfer-Encoding", "binary");
+    
+    response.getOutputStream().write(fileByte);
+    response.getOutputStream().flush();
+    response.getOutputStream().close();
+    ```
+    
+    ```java
+    //TO-BE
+    try (InputStream inputStream = new FileInputStream(filePath);
+          OutputStream outputStream = response.getOutputStream()) {
+    
+          // Set HTTP headers for file download
+          response.setContentType("application/zip");
+          response.setHeader("Content-Transfer-Encoding", "binary");
+    
+          byte[] buffer = new byte[8 * 1024];
+          int bytesRead;
+    
+          while ((bytesRead = inputStream.read(buffer)) != -1) {
+              outputStream.write(buffer, 0, bytesRead);
+          }
+    
+          outputStream.flush();
+    ```
+    
+
 ## 2024/11/19
-### 카카오 AI 컨퍼런스 영상 내용 분석(https://www.youtube.com/watch?v=2wsxPekh_ak)
+
+### 카카오 AI 컨퍼런스 영상 내용 분석( https://www.youtube.com/watch?v=2wsxPekh_ak)
 
 - 라벨링 개선
     - 분류 모델(라벨 추천, AI 참고 영역) + LMM(분류 근거, 이미지 설명)으로 AI 활용
@@ -25,10 +76,10 @@
 
 - Accuracy, Precision, Recall, F1-Score, Fall-Out, TruePositive… (별도 글로 정리 예정)
 
-### OFS OOM 이슈 분석 진행
+### OOM 이슈 분석 진행
 
-- AWS OFS에서 지속적으로 OOM이 발생하며 서비스 중단되는 이슈 발생하여 분석
-    - Cyren 파일 전달 시 파일 크기가 커서 OOM 발생하고 있었음
+- AWS에서 지속적으로 OOM이 발생하며 서비스 중단되는 이슈 발생하여 분석
+    - 파일 전달 시 파일 크기가 커서 OOM 발생하고 있었음
         
         → Buffer를 활용하도록 개선 진행 예정
         
@@ -38,7 +89,7 @@
 
 Work TODO
 
-- OFS OOM 이슈 조치 - 지속적으로 증가하는 메모리 사용량 원인 확인
+- OOM 이슈 조치 - 지속적으로 증가하는 메모리 사용량 원인 확인
 - 통계 관련 내용 학습 마무리
 - 카카오 컨퍼런스 스미싱 관련 내용 확인 https://www.youtube.com/watch?v=eDSXcJOCT5k
 
