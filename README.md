@@ -1,5 +1,19 @@
 # TIL
 오늘 뭐했지?
+## 2024/11/21
+
+### 모델 F1 Score 활용하여 평가
+
+- 스팸 데이터와 정상 데이터는 균형을 이룰 수 없으므로 F1 Score를 통해 평가
+    - spam을 positive(1) 로 해야할지 normal을 positive로 해야할지의 고민
+    → 분류 모델은 스팸 메일을 잘 분류하는 것이 목적이므로 spam을 positive로 설정
+    (normal이 positive일 경우 정상 메일을 잘 분류하는지를 수치화하므로 잘못된 평가 발생)
+    - 평가하는데 쓰이는 logit와 argmax는 뭘까?
+        - `predictions = np.argmax(logits, axis=-1)` 이런코드로 예측하는데 어떻게 동작하는지 의문
+            - logits - 분류할 클래스들 중 특정 클래스에 포함될 확률에 대한 점수
+            - `np.argmax(logits, axis=-1)` - logits의 가장 안쪽 차원에서 가장 높은 값의 인덱스를 반환
+            
+            → logit를 기준으로 가장 해당할 확률 높은 클래스를 반환
 
 ## 2024/11/20
 
